@@ -4,15 +4,15 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/pond918/llm-bots/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pond918/llm-bots?targetFile=package.json)
 [![npm](https://img.shields.io/npm/v/@pond918/llm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
 [![license](https://img.shields.io/npm/l/l@pond918/lm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
-.
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
 ## What is it?
 
-A nodejs package of many large language model (LLMs) client chat bots, e.g. ChatGPT, Bing Chat, bard, Alpaca, Vincuna, Claude, ChatGLM, MOSS, iFlytek Spark, ERNIE and more. You can also define a new bot with the same interface easily.
+A npm package of many large language model (LLMs) client chat bots, e.g. ChatGPT, Bing Chat, bard, Alpaca, Vincuna, Claude, ChatGLM, MOSS, iFlytek Spark, ERNIE and more. You may register your own bots easily.
 
 The package enables bots to support unlimited conversations. each conversation has tree-structured chat history ( each chat message has a `lastMsgId`).
 
-Another use case is to isolate different users for the same bot on the same server. All user related data: session/conversation/chat history, etc. is stored in the specified BotStorage on different namespaces.
+Another use case is to isolate different users for the same bot on the same nodejs server. All user related data: session/conversation/chat history, etc. is stored in the specified BotStorage on different namespaces.
 
 ## Getting Started
 
@@ -25,13 +25,18 @@ npm install --save @pond918/llm-bots
 ### using the bots
 
 ```typescript
-import { LLMBots } from '@pond918/llm-bots'
+import { ChatDto, LLMBots } from '@pond918/llm-bots'
 
-const bots = LLMBots.factory();
-const bot = bots.instance('model_name'); // singleton for each model
-await bot.initSession(userToken); // api token or login callback function
-if(await bot.reloadSession()) // check session availability.
-  bot.sendPrompt({ prompt: 'the prompt', options: { lastMsgId: 'xxx', maxNewWords: 10, stream: false } } as ChatDto);
+const bots = LLMBots.factory()
+const claudeBot = bots.instance('vicuna-13b')
+const ready = await claudeBot?.reloadSession()
+if (ready) {
+  const resp = await claudeBot?.sendPrompt(new ChatDto('hi there. 1 word most'))
+  console.log(resp)
+
+  // stream response
+  claudeBot?.sendPrompt(new ChatDto('who is Gauss. 5 words most'), (msg) => console.log(msg))
+}
 ```
 
 ### register a new bot
@@ -39,9 +44,12 @@ if(await bot.reloadSession()) // check session availability.
 ```typescript
 import { LLMBots } from '@pond918/llm-bots'
 
+// you may apply a custom user data storage
 const bots = LLMBots.factory(storage);
-// new bot will replace old bot with same model name.
-bots.register('my_model_name', new MyLLMBot());
+
+// new bot will replace old bot with same name.
+bots.register(new MyLLMBot());
+
 const models = LLMBots.list();
 console.log(Object.keys(models));
 ```

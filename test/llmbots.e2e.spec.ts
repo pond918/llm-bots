@@ -15,5 +15,3 @@ describe('builtin LLMBots: vicuna-13b (e2e)', () => {
     expect(resp?.prompt).not.toBeNull()
   })
 })
-
-export default {}
