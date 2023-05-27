@@ -1,0 +1,94 @@
+{
+  "name": "llm-bots",
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "description": "extendable llm bots sdk to integrate with any system, with tree structured history and conversations support. you can easliy add new own bots under the hood.",
+  "version": "0.1.0",
+  "keywords": [
+    "llm",
+    "chatbot",
+    "gpt",
+    "openai"
+  ],
+  "author": "pond918",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "node dist/main.js",
+    "start:dev": "nodemon --ext js,ts,json,env --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/main.ts",
+    "prepare": "husky install",
+    "build": "tsc --project tsconfig.build.json",
+    "build:clean": "rm -rf tsconfig.build.tsbuildinfo && rm -rf ./dist",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./test/jest.config.js --detectOpenHandles",
+    "test:watch": "npm run test -- --watch",
+    "test:coverage": "npm run test -- --coverage",
+    "test:ci": "npm run test -- --colors --coverage --ci",
+    "lint": "eslint --ext .ts,.js .",
+    "format": "prettier \"./**\" --write --ignore-unknown",
+    "format:check": "prettier \"./**\" --ignore-unknown --check"
+  },
+  "dependencies": {
+    "@hodlen/sse.ts": "^0.0.3",
+    "async-lock": "^1.4.0",
+    "axios": "^1.4.0",
+    "nanoid": "^4.0.2",
+    "websocket-as-promised": "^2.0.1",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.0",
+    "@commitlint/config-conventional": "^17.0.0",
+    "@jest/globals": "^28.0.0",
+    "@jest/types": "^28.0.0",
+    "@types/async-lock": "^1.4.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^18.0.0",
+    "@types/supertest": "^2.0.12",
+    "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.12.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
+    "husky": "^8.0.1",
+    "jest": "^27.5.1",
+    "lint-staged": "^13.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.6.1",
+    "supertest": "^6.3.3",
+    "ts-jest": "^27.1.5",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pond918/llm-bots"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "bugs": {
+    "url": "https://github.com/pond918/llm-bots/issues"
+  },
+  "homepage": "https://github.com/pond918/llm-bots",
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
