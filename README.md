@@ -1,14 +1,15 @@
 # LLM bots
 
 [![Actions Status](https://github.com/pond918/llm-bots/workflows/ci/badge.svg)](https://github.com/pond918/llm-bots/actions)
-[![Known Vulnerabilities](https://snyk.io/test/github/pond918/llm-bots/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pond918/llm-bots?targetFile=package.json)
 [![npm](https://img.shields.io/npm/v/@pond918/llm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
+[![Known Vulnerabilities](https://snyk.io/test/github/pond918/llm-bots/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pond918/llm-bots?targetFile=package.json)
+[![prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
 [![license](https://img.shields.io/npm/l/l@pond918/lm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
 ## What is it?
 
-A npm package of many large language model (LLMs) client chat bots, e.g. ChatGPT, Bing Chat, bard, Alpaca, Vincuna, Claude, ChatGLM, MOSS, iFlytek Spark, ERNIE and more. You may register your own bots easily.
+An npm package of many large language model (LLMs) client chat bots, e.g. ChatGPT, Bing Chat, bard, Alpaca, Vincuna, Claude, ChatGLM, MOSS, iFlytek Spark, ERNIE and more. You may register your own bots easily.
 
 The package enables bots to support unlimited conversations. each conversation has tree-structured chat history ( each chat message has a `lastMsgId`).
 
