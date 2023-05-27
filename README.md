@@ -1,7 +1,10 @@
 # LLM bots
 
-Project bootstrapped using [NodeJS Starter ToolKit](https://github.com/vitorsalgado/create-nodejs-ts).  
-Visit the repository for more details.
+[![Actions Status](https://github.com/pond918/llm-bots/workflows/ci/badge.svg)](https://github.com/pond918/llm-bots/actions)
+[![Known Vulnerabilities](https://snyk.io/test/github/pond918/llm-bots/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pond918/llm-bots?targetFile=package.json)
+[![npm](https://img.shields.io/npm/v/@pond918/llm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
+[![license](https://img.shields.io/npm/l/l@pond918/lm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
+.
 
 ## What is it?
 
@@ -54,3 +57,4 @@ There are 3 state for a llm bot instance:
 ## Credits
 
 - bots implementation are based on [ChatAll](https://github.com/sunner/ChatALL). Respect!
+- [NodeJS Starter ToolKit](https://github.com/vitorsalgado/create-nodejs-ts)
