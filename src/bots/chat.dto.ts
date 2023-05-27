@@ -2,11 +2,12 @@ import { nanoid } from 'nanoid'
 
 export class ChatDto {
   /** local msg id */
-  readonly id: string
+  readonly id?: string
+  readonly done?: boolean
 
   constructor(
     public readonly prompt: string | string[],
-    public done = false,
+    done = false,
     public readonly options: {
       /** local parent msg id */
       lastMsgId?: string
@@ -15,6 +16,6 @@ export class ChatDto {
       stream?: boolean
     } & Record<string, unknown> = {},
   ) {
-    this.id = nanoid()
+    done && ((this.id = nanoid()), (this.done = true))
   }
 }

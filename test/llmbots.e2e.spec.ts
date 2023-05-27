@@ -10,7 +10,8 @@ describe('builtin LLMBots: vicuna-13b (e2e)', () => {
     const ready = await claudeBot?.reloadSession()
     expect(ready).toBeTruthy()
 
-    const resp = await claudeBot?.sendPrompt(new ChatDto('hi there. 1 word most'))
+    // eslint-disable-next-line no-console
+    const resp = await claudeBot?.sendPrompt(new ChatDto('hi there. 3 words most'), msg => console.log(msg))
     // console.log(resp)
     expect(resp?.prompt).not.toBeNull()
   })
