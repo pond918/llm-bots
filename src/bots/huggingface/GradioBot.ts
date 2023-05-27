@@ -1,3 +1,4 @@
+// based on https://github.com/sunner/ChatALL
 import axios from 'axios'
 import WebSocketAsPromised from 'websocket-as-promised'
 import WebSocket from 'ws'

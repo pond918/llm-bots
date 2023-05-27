@@ -50,3 +50,7 @@ There are 3 state for a llm bot instance:
 - llm config state: e.g. llm url. Stored as bot class properties.
 - server session state: API tokens/login sessions. Stored in the session pool, may be shared among users.
 - user data state: conversation/chat history. Stored in the provided storage, usually user isolated.
+
+## Credits
+
+- bots implementation are based on [ChatAll](https://github.com/sunner/ChatALL). Respect!

@@ -4,6 +4,7 @@ import { LLMServerType } from '../base-bot'
 import { ChatDto } from '../chat.dto'
 
 /** https://chat.lmsys.org/ */
+// based on https://github.com/sunner/ChatALL
 export default class LMSYSBot extends GradioBot {
   // static _brandId = 'lmsys' // Brand id of the bot, should be unique. Used in i18n.
   // static _className = 'LMSYSBot' // Class name of the bot

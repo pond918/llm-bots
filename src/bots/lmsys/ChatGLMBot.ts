@@ -1,3 +1,4 @@
+// based on https://github.com/sunner/ChatALL
 import LMSYSBot from './LMSYSBot'
 
 export default class ChatGLMBot extends LMSYSBot {
