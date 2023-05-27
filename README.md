@@ -63,6 +63,12 @@ There are 3 state for a llm bot instance:
 - server session state: API tokens/login sessions. Stored in the session pool, may be shared among users.
 - user data state: conversation/chat history. Stored in the provided storage, usually user isolated.
 
+## License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpond918%2Fllm-bots.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpond918%2Fllm-bots?ref=badge_shield)
+
+This project is [Apache-2.0 Licensed](LICENSE).
+
 ## Credits
 
 - bots implementation are based on [ChatAll](https://github.com/sunner/ChatALL). Respect!
