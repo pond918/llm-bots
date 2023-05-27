@@ -5,6 +5,7 @@
 [![npm](https://img.shields.io/npm/v/@pond918/llm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
 [![license](https://img.shields.io/npm/l/l@pond918/lm-bots.svg)](https://www.npmjs.com/package/@pond918/llm-bots)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpond918%2Fllm-bots.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpond918%2Fllm-bots?ref=badge_shield)
 
 ## What is it?
 
@@ -66,3 +67,7 @@ There are 3 state for a llm bot instance:
 
 - bots implementation are based on [ChatAll](https://github.com/sunner/ChatALL). Respect!
 - [NodeJS Starter ToolKit](https://github.com/vitorsalgado/create-nodejs-ts)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpond918%2Fllm-bots.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpond918%2Fllm-bots?ref=badge_large)
