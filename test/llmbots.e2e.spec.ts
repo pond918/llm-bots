@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ChatDto, LLMBots } from '../src'
 
 describe('builtin LLMBots: vicuna-13b (e2e)', () => {
@@ -10,13 +11,16 @@ describe('builtin LLMBots: vicuna-13b (e2e)', () => {
     const ready = await claudeBot?.reloadSession()
     expect(ready).toBeTruthy()
 
-    const msg = new ChatDto('Who is Gauss. reply 5 words most')
-    // eslint-disable-next-line no-console
-    const resp = await claudeBot?.sendPrompt(msg, msg => console.log(msg))
-    // eslint-disable-next-line no-console
+    const r = await claudeBot?.sendPrompt(new ChatDto('Who is Gauss. reply 3 words most'))
+    console.log(r)
+    expect(r?.prompt).not.toBeNull()
+
+    // contextual conversation
+    const req = new ChatDto("What's his wife's full name. reply 5 words most")
+    const resp = await claudeBot?.sendPrompt(req, msg => console.log(msg))
     console.log(resp)
     expect(resp?.prompt).not.toBeNull()
-    expect(resp?.options.lastMsgId).toEqual(msg.id)
+    expect(resp?.options.lastMsgId).toEqual(req.id)
     expect(resp?.options._conversationKey).not.toBeNull()
   })
 })
