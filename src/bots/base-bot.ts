@@ -13,6 +13,8 @@ export abstract class LLMBot {
   _chatHistory!: ChatHistory
   private __storage!: BotStorage
 
+  protected static readonly _conversation_key_ = '_Conversation_key_'
+
   constructor(
     /** bot unique name */
     readonly name: string,
@@ -53,12 +55,13 @@ export abstract class LLMBot {
 
   async sendPrompt(msg: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
     if (!(await this.isAvailable())) {
-      const msg = new ChatDto('bot.notAvailable', true)
+      const msg = new ChatDto('bot.notAvailable')
       streamCallback && streamCallback(msg)
       return msg
     }
 
     // always store req into storage history
+    // `lastMsgId` and `_conversationKey` are updated
     const branched = await this._chatHistory.append(msg)
 
     if (this._getServerType() == 'stateless') {
@@ -69,8 +72,13 @@ export abstract class LLMBot {
         if (this._getServerType() == 'threads') {
           // if thread cut. a new server thread has to be created
           throw new Error('TODO: create a new server thread for new branch.')
+          msg.options._conversationKey = ''
         } // else server side support
       }
+
+      // create new conversation on llm server
+      msg.options._conversationKey || (msg.options._conversationKey = await this._getConversation(true))
+      await this._setConversation(msg.options._conversationKey)
     }
 
     return this._sendPrompt(msg, streamCallback).then(async resp => {
@@ -92,9 +100,29 @@ export abstract class LLMBot {
    * @returns the LLM server type:
    * - `stateless`: server does not keep chat history
    * - `threads`: server keeps multi-threads of chat history
-   * - `tree`: server keeps tree structured history
+   * - `trees`: server keeps tree structured history
    */
   abstract _getServerType(): LLMServerType
+
+  abstract createConversation(): Promise<string>
+
+  /**
+   * stateful llm server has server side conversations
+   * @param create true: force create; false: never create; otherwise: create if there is no key
+   * @returns
+   */
+  async _getConversation(create?: boolean): Promise<string> {
+    let key = create ? '' : await this.__storage.get<string>(LLMBot._conversation_key_)
+    if (create || (!key && create !== false)) {
+      key = await this.createConversation()
+      this._setConversation(key)
+    }
+    return key
+  }
+  /** stateful llm server has server side conversations */
+  async _setConversation(key: string) {
+    this.__storage.set(LLMBot._conversation_key_, key)
+  }
 }
 
 export enum LLMServerType {
@@ -103,5 +131,5 @@ export enum LLMServerType {
   /** server keeps multi-threads of chat history */
   threads = 'threads',
   /** server keeps tree structured history */
-  tree = 'tree',
+  trees = 'trees',
 }

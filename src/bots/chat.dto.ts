@@ -7,15 +7,16 @@ export class ChatDto {
 
   constructor(
     public readonly prompt: string | string[],
-    done = false,
+    done = true,
     public readonly options: {
       /** msg type: true: response, false: request */
       resp?: boolean
-      /** local parent msg id */
+      /** parent msg id. if '', means to start a new conversation; if undefined, append to current conversation. */
       lastMsgId?: string
+      /** conversation key from llm server */
+      _conversationKey?: string
       /** approximate max length of new response */
       maxNewWords?: number
-      stream?: boolean
     } & Record<string, unknown> = {},
   ) {
     done && ((this.id = nanoid()), (this.done = true))

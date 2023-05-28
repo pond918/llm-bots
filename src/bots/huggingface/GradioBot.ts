@@ -27,7 +27,6 @@ export default abstract class GradioBot extends LLMBot {
 
   ////// user state keys
   protected static readonly _session_config = '_session_config'
-  protected static readonly _session_hash = '_session_hash'
 
   async reloadSession() {
     let available = false
@@ -40,10 +39,8 @@ export default abstract class GradioBot extends LLMBot {
           config.root = this._loginUrl
           await this._userStorage.set(GradioBot._session_config, config)
 
-          if (!(await this._userStorage.get(GradioBot._session_hash))) {
-            const session_hash = await this.createConversation()
-            await this._userStorage.set(GradioBot._session_hash, session_hash)
-          }
+          // init a conversation forehand
+          await this._getConversation()
           available = true
         }
       } catch (err) {
@@ -56,7 +53,7 @@ export default abstract class GradioBot extends LLMBot {
   }
 
   async _sendPrompt(prompt: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
-    let result: ChatDto = new ChatDto('')
+    let result: ChatDto = new ChatDto('', false)
     for (const key in this._fnIndexes) {
       const fn_index = this._fnIndexes[key]
       const resp = await this._sendFnIndex(fn_index, prompt, streamCallback)
@@ -67,7 +64,7 @@ export default abstract class GradioBot extends LLMBot {
 
   async _sendFnIndex(fn_index: number, prompt: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
     const config = await this._userStorage.get<Record<string, string>>(GradioBot._session_config)
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const url = new URL(config.root + config.path + '/queue/join')
         url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
@@ -83,14 +80,12 @@ export default abstract class GradioBot extends LLMBot {
           },
         })
         const data = this.makeData(fn_index, prompt)
-        let session_hash: string
-        wsp.onUnpackedMessage.addListener(async event => {
+        const session_hash = await this._getConversation()
+        wsp.onUnpackedMessage.addListener(event => {
           if (event.msg === 'send_hash') {
-            session_hash = session_hash || (await this._userStorage.get<string>(GradioBot._session_hash))
             wsp.sendPacked({ fn_index, session_hash })
           } else if (event.msg === 'send_data') {
             // Requested to send data
-            session_hash = session_hash || (await this._userStorage.get<string>(GradioBot._session_hash))
             wsp.sendPacked({
               data,
               event_data: null,
@@ -101,12 +96,12 @@ export default abstract class GradioBot extends LLMBot {
             if (event.rank > 0) {
               // Waiting in queue
               event.rank_eta = Math.floor(event.rank_eta)
-              streamCallback && streamCallback(new ChatDto('gradio.waiting'))
+              streamCallback && streamCallback(new ChatDto('gradio.waiting', false))
             }
           } else if (event.msg === 'process_generating') {
             // Generating data
             if (event.success && event.output.data) {
-              streamCallback && streamCallback(new ChatDto(this.parseData(fn_index, event.output.data)))
+              streamCallback && streamCallback(new ChatDto(this.parseData(fn_index, event.output.data), false))
             } else {
               reject(new Error(event.output.error))
             }
@@ -155,10 +150,6 @@ export default abstract class GradioBot extends LLMBot {
   abstract makeData(fn_index: number, prompt: ChatDto): unknown
   abstract parseData(fn_index: number, data: unknown): string
 
-  /**
-   * Should implement this method if the bot supports conversation.
-   * The conversation structure is defined by the subclass.
-   */
   async createConversation() {
     return Math.random().toString(36).substring(2)
   }
