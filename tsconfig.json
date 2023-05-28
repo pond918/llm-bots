@@ -28,7 +28,7 @@
     "noEmitHelpers": false,
 
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDirs": ["src", "test"],
     "baseUrl": "."
   },
   "exclude": [
