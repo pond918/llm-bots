@@ -64,6 +64,10 @@ There are 3 state for an llm bot instance:
 - server session state: API tokens/login sessions. Stored in the session pool, may be shared among users.
 - user data state: conversation/chat history. Stored in the provided storage, usually users isolated.
 
+## TODOs
+
+- [ ] namespaced/scoped storage
+
 ## License
 
 This project is [Apache-2.0 Licensed](LICENSE).
