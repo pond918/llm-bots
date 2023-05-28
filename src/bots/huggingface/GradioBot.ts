@@ -68,17 +68,23 @@ export default abstract class GradioBot extends LLMBot {
       try {
         const url = new URL(config.root + config.path + '/queue/join')
         url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
-        const wsp = new WebSocketAsPromised(url.toString(), {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          createWebSocket: url => new WebSocket(url) as any,
-          extractMessageData: event => event,
-          packMessage: data => {
+
+        // browser compatibility
+        const wsOptions: Record<string, any> = {
+          packMessage: (data: unknown) => {
             return JSON.stringify(data)
           },
-          unpackMessage: data => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          unpackMessage: (data: any) => {
             return JSON.parse(data.toString())
           },
-        })
+        }
+        if (typeof window === 'undefined') {
+          // non-browser
+          wsOptions.createWebSocket = (url: string) => new WebSocket(url) as unknown
+          wsOptions.extractMessageData = (event: unknown) => event
+        }
+        const wsp = new WebSocketAsPromised(url.toString(), wsOptions)
         const data = this.makeData(fn_index, prompt)
         const session_hash = await this._getConversation()
         wsp.onUnpackedMessage.addListener(event => {
