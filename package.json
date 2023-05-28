@@ -1,8 +1,8 @@
 {
-  "name": "llm-bots",
+  "name": "@pond918/llm-bots",
   "type": "module",
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "description": "extendable llm bots sdk to integrate with any system, with tree structured history and conversations support. you can easliy add new own bots under the hood.",
   "version": "0.1.0",
   "keywords": [
