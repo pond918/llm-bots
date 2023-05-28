@@ -9,6 +9,8 @@ export class ChatDto {
     public readonly prompt: string | string[],
     done = false,
     public readonly options: {
+      /** msg type: true: response, false: request */
+      resp?: boolean
       /** local parent msg id */
       lastMsgId?: string
       /** approximate max length of new response */

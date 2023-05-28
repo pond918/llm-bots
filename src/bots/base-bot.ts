@@ -52,6 +52,12 @@ export abstract class LLMBot {
   }
 
   async sendPrompt(msg: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
+    if (!(await this.isAvailable())) {
+      const msg = new ChatDto('bot.notAvailable', true)
+      streamCallback && streamCallback(msg)
+      return msg
+    }
+
     // always store req into storage history
     const branched = await this._chatHistory.append(msg)
 
@@ -70,6 +76,7 @@ export abstract class LLMBot {
     return this._sendPrompt(msg, streamCallback).then(async resp => {
       // store response msg into history
       resp.options.lastMsgId = msg.id
+      resp.options.resp = true
       await this._chatHistory.append(resp)
       return resp
     })
