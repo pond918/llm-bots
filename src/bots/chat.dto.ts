@@ -3,11 +3,16 @@ import { nanoid } from 'nanoid'
 export class ChatDto {
   /** local msg id */
   readonly id?: string
-  readonly done?: boolean
+  /** status code. empty means ok; positive means still processing; negative means no more processing */
+  readonly code?: number
 
+  /**
+   * @param code status code. empty means ok; positive means still processing; negative means no more processing
+   * @param options
+   */
   constructor(
     public readonly prompt: string | string[],
-    done = true,
+    code = 0,
     public readonly options: {
       /** msg type: true: response, false: request */
       resp?: boolean
@@ -21,6 +26,6 @@ export class ChatDto {
       stateless?: boolean
     } & Record<string, unknown> = {},
   ) {
-    done && ((this.id = nanoid()), (this.done = true))
+    !code && ((this.id = nanoid()), (this.code = 0))
   }
 }

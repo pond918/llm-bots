@@ -53,11 +53,11 @@ export default abstract class GradioBot extends LLMBot {
   }
 
   async _sendPrompt(prompt: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
-    let result: ChatDto = new ChatDto('', false)
+    let result: ChatDto = new ChatDto('', -1)
     for (const key in this._fnIndexes) {
       const fn_index = this._fnIndexes[key]
       const resp = await this._sendFnIndex(fn_index, prompt, streamCallback)
-      resp && resp.done && resp.prompt && (result = resp)
+      resp && !resp.code && resp.prompt && (result = resp)
     }
     return result
   }
@@ -102,12 +102,12 @@ export default abstract class GradioBot extends LLMBot {
             if (event.rank > 0) {
               // Waiting in queue
               event.rank_eta = Math.floor(event.rank_eta)
-              streamCallback && streamCallback(new ChatDto('gradio.waiting', false))
+              streamCallback && streamCallback(new ChatDto('gradio.waiting', 1))
             }
           } else if (event.msg === 'process_generating') {
             // Generating data
             if (event.success && event.output.data) {
-              streamCallback && streamCallback(new ChatDto(this.parseData(fn_index, event.output.data), false))
+              streamCallback && streamCallback(new ChatDto(this.parseData(fn_index, event.output.data), 1))
             } else {
               reject(new Error(event.output.error))
             }
@@ -117,7 +117,7 @@ export default abstract class GradioBot extends LLMBot {
               const prompt = this.parseData(fn_index, event.output.data)
               const resp = new ChatDto(
                 prompt,
-                fn_index == this._fnIndexes[this._fnIndexes.length - 1], // Only the last one is done
+                fn_index == this._fnIndexes[this._fnIndexes.length - 1] ? 0 : -1, // Only the last one is done
               )
               streamCallback && streamCallback(resp)
               resolve(resp)
