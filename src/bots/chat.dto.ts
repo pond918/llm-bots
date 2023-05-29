@@ -26,6 +26,6 @@ export class ChatDto {
       stateless?: boolean
     } & Record<string, unknown> = {},
   ) {
-    !code && ((this.id = nanoid()), (this.code = 0))
+    code ? (this.code = code) : (this.id = nanoid())
   }
 }

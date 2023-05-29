@@ -117,7 +117,7 @@ export default abstract class GradioBot extends LLMBot {
               const prompt = this.parseData(fn_index, event.output.data)
               const resp = new ChatDto(
                 prompt,
-                fn_index == this._fnIndexes[this._fnIndexes.length - 1] ? 0 : -1, // Only the last one is done
+                fn_index == this._fnIndexes.at(-1) ? 0 : 1, // Only the last one is done
               )
               streamCallback && streamCallback(resp)
               resolve(resp)
