@@ -32,7 +32,7 @@ export class ChatHistory {
       // branched history, may use different conversation key
       msg.options._conversationKey = parent.options._conversationKey
 
-      delete parent.options.leaf
+      msg.options.stateless || delete parent.options.leaf
     } else if (pid !== '') {
       // append to current conversation
       const parent = allMsgs.at(-1)
@@ -43,7 +43,8 @@ export class ChatHistory {
     } // else start a new conversation
 
     msg.options.leaf = 1
-    allMsgs.push(msg)
+    // stateless msg will not be added into history
+    msg.options.stateless || allMsgs.push(msg)
 
     return branched
   }

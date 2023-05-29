@@ -85,7 +85,7 @@ export abstract class LLMBot {
       // store response msg into history
       resp.options.lastMsgId = msg.id
       resp.options.resp = true
-      await this._chatHistory.append(resp)
+      msg.options.stateless || (await this._chatHistory.append(resp))
       return resp
     })
   }

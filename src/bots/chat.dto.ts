@@ -15,8 +15,10 @@ export class ChatDto {
       lastMsgId?: string
       /** conversation key from llm server */
       _conversationKey?: string
-      /** approximate max length of new response */
-      maxNewWords?: number
+      /** approximately max length of new response */
+      maxResponse?: number
+      /** if true, this msg & it's response will not be stored into history */
+      stateless?: boolean
     } & Record<string, unknown> = {},
   ) {
     done && ((this.id = nanoid()), (this.done = true))
