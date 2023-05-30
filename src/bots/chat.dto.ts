@@ -11,7 +11,7 @@ export class ChatDto {
    * @param options
    */
   constructor(
-    public readonly prompt: string | string[],
+    public prompt: string | string[],
     code = 0,
     public readonly options: {
       /** msg type: true: response, false: request */
@@ -20,7 +20,7 @@ export class ChatDto {
       lastMsgId?: string
       /** conversation key from llm server */
       _conversationKey?: string
-      /** approximately max length of new response */
+      /** TODO approximately max words of new response */
       maxResponse?: number
       /** if true, this msg & it's response will not be stored into history */
       stateless?: boolean

@@ -153,6 +153,18 @@ export default abstract class GradioBot extends LLMBot {
     })
   }
 
+  /** formalize response prompt text, if capable. */
+  _formalizeResponse(msg: ChatDto) {
+    switch (this.outputFormat) {
+      case 'html': // to plain text.
+        if (msg.prompt) {
+          if (Array.isArray(msg.prompt)) msg.prompt = msg.prompt.map(v => v.replace(/<[^>]*>/g, ''))
+          else msg.prompt = msg.prompt.replace(/<[^>]*>/g, '')
+        }
+        break
+    }
+  }
+
   abstract makeData(fn_index: number, prompt: ChatDto): unknown
   abstract parseData(fn_index: number, data: unknown): string
 
