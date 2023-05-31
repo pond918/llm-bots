@@ -18,7 +18,7 @@ export class ChatHistory {
   // async append(msg: ChatDto & { prompt: string }) {
   async append(msg: ChatDto) {
     if (msg.options.compound) throw new Error('chat.history.append.compound.not.allowed')
-    if (msg.code) throw new Error('chat.history.append.undone.not.allowed')
+    if (msg.statusCode) throw new Error('chat.history.append.undone.not.allowed')
 
     let branched = false
 
@@ -68,7 +68,7 @@ export class ChatHistory {
         if (!(mid = m.options.lastMsgId)) break
       }
     }
-    const retMsg = new ChatDto(ret.reverse(), msg.code, { ...msg.options, compound: 1 })
+    const retMsg = new ChatDto(ret.reverse(), msg.statusCode, { ...msg.options, compound: 1 })
     _conversationKey && (retMsg.options._conversationKey = _conversationKey)
     return retMsg
   }

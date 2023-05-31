@@ -4,15 +4,16 @@ export class ChatDto {
   /** local msg id */
   readonly id?: string
   /** status code. empty means ok; positive means still processing; negative means no more processing */
-  readonly code?: number
+  statusCode?: number
+  message?: string
 
   /**
-   * @param code status code. empty means ok; positive means still processing; negative means no more processing
+   * @param statusCode status code. empty means ok; positive means still processing; negative means no more processing
    * @param options
    */
   constructor(
     public prompt: string | string[],
-    code = 0,
+    statusCode = 0,
     public readonly options: {
       /** msg type: true: response, false: request */
       resp?: boolean
@@ -26,6 +27,6 @@ export class ChatDto {
       stateless?: boolean
     } & Record<string, unknown> = {},
   ) {
-    code ? (this.code = code) : (this.id = nanoid())
+    statusCode ? (this.statusCode = statusCode) : (this.id = nanoid())
   }
 }

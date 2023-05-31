@@ -57,7 +57,7 @@ export default abstract class GradioBot extends LLMBot {
     for (const key in this._fnIndexes) {
       const fn_index = this._fnIndexes[key]
       const resp = await this._sendFnIndex(fn_index, prompt, streamCallback)
-      resp && !resp.code && resp.prompt && (result = resp)
+      resp && !resp.statusCode && resp.prompt && (result = resp)
     }
     return result
   }
