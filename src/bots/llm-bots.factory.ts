@@ -5,44 +5,47 @@ import AlpacaBot from './lmsys/AlpacaBot'
 import ChatGLMBot from './lmsys/ChatGLMBot'
 import ClaudeBot from './lmsys/ClaudeBot'
 import VicunaBot from './lmsys/VicunaBot'
+import AzureOpenAIAPIBot from './microsoft/AzureOpenAIAPIBot'
 
-export const LLMBots = {
+export class LLMBots {
+  protected readonly $STORAGE: BotStorage
+  protected readonly $REGISTRY: Record<string, LLMBot> = {}
+  protected readonly $SERVER_MODE: boolean
+
   /**
    * create a new bots factory.
    * @param storage user data storage
    * @param serverMode: in server mode, session tokens may be shared among users.
    * @returns the factory
    */
-  factory: (storage?: BotStorage, serverMode = false) => {
-    const $STORAGE = storage || (storage = new MemStorage())
-    const $REGISTRY: Record<string, LLMBot> = {}
-    const $SERVER_MODE = serverMode
-
-    const registerBot = (bot: LLMBot) => {
-      bot._userStorage = $STORAGE
-      bot.serverMode = $SERVER_MODE
-
-      const old = $REGISTRY[bot.name]
-      $REGISTRY[bot.name] = bot
-      return old
-    }
+  constructor(storage?: BotStorage, serverMode?: boolean) {
+    this.$STORAGE = storage || (storage = new MemStorage())
+    this.$SERVER_MODE = !!serverMode
 
     // init builtin bots
-    registerBot(new AlpacaBot())
-    registerBot(new ChatGLMBot())
-    registerBot(new ClaudeBot())
-    registerBot(new VicunaBot())
+    this.register(new AlpacaBot())
+    this.register(new ChatGLMBot())
+    this.register(new ClaudeBot())
+    this.register(new VicunaBot())
+    this.register(new AzureOpenAIAPIBot())
 
-    return {
-      /**
-       * @param bot: bot instance
-       * @returns old bot
-       */
-      register: registerBot,
+    return
+  }
 
-      instance: (name: string): LLMBot | undefined => $REGISTRY[name],
+  /**
+   * @param bot: bot instance
+   * @returns old bot
+   */
+  register = (bot: LLMBot) => {
+    bot._userStorage = this.$STORAGE
+    bot.serverMode = !!this.$SERVER_MODE
 
-      list: () => $REGISTRY,
-    }
-  },
+    const old = this.$REGISTRY[bot.name]
+    this.$REGISTRY[bot.name] = bot
+    return old
+  }
+
+  instance = (name: string): LLMBot | undefined => this.$REGISTRY[name]
+
+  list = () => this.$REGISTRY
 }

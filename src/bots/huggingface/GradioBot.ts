@@ -28,7 +28,7 @@ export default abstract class GradioBot extends LLMBot {
   ////// user state keys
   protected static readonly _session_config = '_session_config'
 
-  async reloadSession() {
+  async _reloadSession() {
     let available = false
     if (this._loginUrl) {
       try {
@@ -57,8 +57,9 @@ export default abstract class GradioBot extends LLMBot {
     for (const key in this._fnIndexes) {
       const fn_index = this._fnIndexes[key]
       const resp = await this._sendFnIndex(fn_index, prompt, streamCallback)
-      resp && !resp.statusCode && resp.prompt && (result = resp)
+      resp && !resp.statusCode && resp.text && (result = resp)
     }
+    this._formalizeResponse(result)
     return result
   }
 
@@ -102,12 +103,12 @@ export default abstract class GradioBot extends LLMBot {
             if (event.rank > 0) {
               // Waiting in queue
               event.rank_eta = Math.floor(event.rank_eta)
-              streamCallback && streamCallback(new ChatDto('gradio.waiting', 1))
+              streamCallback && streamCallback(new ChatDto('gradio.waiting', -1))
             }
           } else if (event.msg === 'process_generating') {
             // Generating data
             if (event.success && event.output.data) {
-              streamCallback && streamCallback(new ChatDto(this.parseData(fn_index, event.output.data), 1))
+              streamCallback && streamCallback(new ChatDto(this.parseData(fn_index, event.output.data), -1))
             } else {
               reject(new Error(event.output.error))
             }
@@ -117,7 +118,7 @@ export default abstract class GradioBot extends LLMBot {
               const prompt = this.parseData(fn_index, event.output.data)
               const resp = new ChatDto(
                 prompt,
-                fn_index == this._fnIndexes.at(-1) ? 0 : 1, // Only the last one is done
+                fn_index == this._fnIndexes.at(-1) ? 0 : -1, // Only the last one is done
               )
               streamCallback && streamCallback(resp)
               resolve(resp)
@@ -157,10 +158,7 @@ export default abstract class GradioBot extends LLMBot {
   _formalizeResponse(msg: ChatDto) {
     switch (this.outputFormat) {
       case 'html': // to plain text.
-        if (msg.prompt) {
-          if (Array.isArray(msg.prompt)) msg.prompt = msg.prompt.map(v => v.replace(/<[^>]*>/g, ''))
-          else msg.prompt = msg.prompt.replace(/<[^>]*>/g, '')
-        }
+        if (msg.text) msg.text = msg.text.replace(/<[^>]*>/g, ' ')
         break
     }
   }

@@ -1,10 +1,9 @@
 {
   "name": "@pond918/llm-bots",
-  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "extendable llm bots sdk to integrate with any system, with tree structured history and conversations support. you can easliy add new own bots under the hood.",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "keywords": [
     "llm",
     "chatbot",
@@ -31,6 +30,7 @@
     "@hodlen/sse.ts": "^0.0.3",
     "async-lock": "^1.4.0",
     "axios": "^1.4.0",
+    "langchain": "^0.0.102",
     "nanoid": "^4.0.2",
     "websocket-as-promised": "^2.0.1",
     "ws": "^8.13.0"

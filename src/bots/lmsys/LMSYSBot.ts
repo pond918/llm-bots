@@ -17,9 +17,11 @@ export default class LMSYSBot extends GradioBot {
     super(name, 'https://chat.lmsys.org/', [7, 8], 'html')
   }
 
-  initSession(userToken: object | (() => object)): Promise<boolean> {
-    throw new Error('Method not implemented.' + userToken)
+  /** needn't token */
+  _initSession(): Promise<boolean> {
+    return this.reloadSession()
   }
+
   _getServerType() {
     return LLMServerType.threads // TODO test if is tree
   }
@@ -27,7 +29,7 @@ export default class LMSYSBot extends GradioBot {
   makeData(fn_index: number, prompt: ChatDto) {
     let r = null
     if (fn_index === this._fnIndexes[0]) {
-      r = [null, this._model, prompt.prompt]
+      r = [null, this._model, prompt.text]
     } else if (fn_index === this._fnIndexes[1]) {
       r = [null, 0.7, 1, 512] // TODO [null, temperature, Top P, max output tokens]
     }

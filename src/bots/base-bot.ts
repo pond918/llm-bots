@@ -34,28 +34,56 @@ export abstract class LLMBot {
 
   /**
    * create llm server session from API token, or user login callback, or reuse a session from pool
+   * @param config the API token, or user login callback.
+   * @returns true is succeed
+   */
+  async initSession(config: Record<string, any> | (() => Record<string, any>)): Promise<boolean> {
+    const ready = await this._initSession(config)
+    if (ready) this.setAvailable(true)
+    else this.setAvailable(undefined)
+    return ready
+  }
+
+  /**
+   * create llm server session from API token, or user login callback, or reuse a session from pool
    * @param userToken the API token, or user login callback.
    * @returns true is succeed
    */
-  abstract initSession(userToken: object | (() => object)): Promise<boolean>
+  protected abstract _initSession(config: Record<string, any> | (() => Record<string, any>)): Promise<boolean>
 
   /**
-   * reload session context, e.g. conversation.
+   * reload session context, including conversation.
    */
-  abstract reloadSession(): Promise<boolean>
+  async reloadSession(): Promise<boolean> {
+    const ready = await this._reloadSession()
+    this.setAvailable(ready)
+    return ready
+  }
 
-  /** true if the bot is ready to chat */
-  async isAvailable() {
+  /**
+   * reload session context, including conversation.
+   */
+  protected abstract _reloadSession(): Promise<boolean>
+
+  /**
+   * @returns `true` if the bot is ready to chat, `false` if session need reload, `undefined` if session not initialized
+   */
+  async isAvailable(): Promise<boolean | undefined> {
     return await this._userStorage.get<boolean>('_isAvailable')
   }
 
-  async setAvailable(v: boolean) {
+  /**
+   * @param v `true` if the bot is ready to chat, `false` if session need reload, `undefined` if session not initialized
+   */
+  async setAvailable(v: boolean | undefined) {
     await this._userStorage.set('_isAvailable', v)
   }
 
   async sendPrompt(msg: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
+    if (!msg.text) return new ChatDto('')
+
     if (!(await this.isAvailable())) {
-      const msg = new ChatDto('bot.notAvailable')
+      const msg = new ChatDto('bot.notAvailable', 404)
       streamCallback && streamCallback(msg)
       return msg
     }
@@ -84,7 +112,7 @@ export abstract class LLMBot {
     return this._sendPrompt(msg, streamCallback).then(async resp => {
       // store response msg into history
       resp.options.lastMsgId = msg.id
-      resp.options.resp = true
+      resp.options.type = 'ai'
       msg.options.stateless || (await this._chatHistory.append(resp))
       return resp
     })
@@ -104,6 +132,7 @@ export abstract class LLMBot {
    */
   abstract _getServerType(): LLMServerType
 
+  /** start a new conversation thread */
   abstract createConversation(): Promise<string>
 
   /**

@@ -29,9 +29,11 @@ npm install --save @pond918/llm-bots
 ```typescript
 import { ChatDto, LLMBots } from '@pond918/llm-bots'
 
-const bots = LLMBots.factory()
+const bots = new LLMBots()
 const claudeBot = bots.instance('vicuna-13b')
-const ready = await claudeBot?.reloadSession()
+// vicuna-13b needn't token
+const token = null
+const ready = await claudeBot?.initSession(token)
 if (ready) {
   const resp = await claudeBot?.sendPrompt(new ChatDto('hi there. 1 word most'))
   console.log(resp)
