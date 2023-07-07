@@ -1,8 +1,8 @@
-// import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid'
 
 export class ChatDto {
   /** local msg id */
-  readonly id?: string
+  id?: string
   /** status code. empty means ok; positive means still processing; negative means no more processing */
   statusCode?: number
   message?: string
@@ -29,6 +29,6 @@ export class ChatDto {
       __history?: ChatDto[]
     } & Record<string, unknown> = {},
   ) {
-    statusCode ? (this.statusCode = statusCode) : 'this.id = nanoid()'
+    statusCode ? (this.statusCode = statusCode) : (this.id = nanoid())
   }
 }

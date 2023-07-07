@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import { ChatDto } from '../bots/chat.dto'
 import { BotStorage } from './bot-storage.interface'
 
@@ -20,19 +21,24 @@ export class ChatHistory {
   async append(msg: ChatDto) {
     if (msg.options.__history?.length) throw new Error('chat.history.append.compound.not.allowed')
     if (msg.statusCode) throw new Error('chat.history.append.undone.not.allowed')
+    msg.id || (msg.id = nanoid())
 
     let branched = false
 
     const pid = msg.options.lastMsgId
     if (pid) {
-      const parent = await this._findLast<ChatDto>(m => m.id == pid)
-      if (!parent) throw Error('chat.history.notfound.lastMsgId: ' + pid)
+      const item = await this._findLast<ChatDto>(m => m.id == pid)
+      if (!item) throw Error('chat.history.notfound.lastMsgId: ' + pid)
+      const [preId, parent] = item
 
       branched = !parent.options.leaf
       // branched history, may use different conversation key
       msg.options._conversationKey = parent.options._conversationKey
 
-      msg.options.stateless || delete parent.options.leaf
+      if (!msg.options.stateless && parent.options.leaf) {
+        delete parent.options.leaf
+        await this._storage.set(msg.id as string, [preId, parent])
+      }
     } else if (pid !== '') {
       // append to current conversation
       const lastId = await this._storage.get<string>(ChatHistory._last_msg_id)
@@ -62,7 +68,7 @@ export class ChatHistory {
     if (!msg.options?.lastMsgId) return msg
     msg.options.__history = []
 
-    let mid: unknown = msg.id,
+    let mid: unknown = msg.options.lastMsgId,
       _conversationKey: string | undefined
     for (let msgId = await this._storage.get<string>(ChatHistory._last_msg_id); msgId; ) {
       const [preId, m] = await this._storage.get<[string, ChatDto]>(msgId)
@@ -78,11 +84,11 @@ export class ChatHistory {
     return msg
   }
 
-  protected async _findLast<T>(fn: (a: T) => unknown) {
+  protected async _findLast<T>(fn: (a: T) => unknown): Promise<[string, T] | undefined> {
     // find from end to start
     for (let msgId = await this._storage.get<string>(ChatHistory._last_msg_id); msgId; ) {
       const [preId, a] = await this._storage.get<[string, T]>(msgId)
-      if (fn(a)) return a
+      if (fn(a)) return [preId, a]
       msgId = preId
     }
     return

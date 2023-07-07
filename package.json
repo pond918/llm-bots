@@ -1,9 +1,9 @@
 {
   "name": "@pond918/llm-bots",
-  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "main": "dist/index.js",
   "description": "extendable llm bots sdk to integrate with any system, with tree structured history and conversations support. you can easliy add new own bots under the hood.",
-  "version": "0.0.1",
+  "version": "0.0.1006",
   "keywords": [
     "llm",
     "chatbot",
@@ -12,6 +12,7 @@
   ],
   "author": "pond918",
   "license": "Apache-2.0",
+  "files": ["dist"],
   "scripts": {
     "start": "node dist/main.js",
     "start:dev": "nodemon --ext js,ts,json,env --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/main.ts",
@@ -31,7 +32,7 @@
     "async-lock": "^1.4.0",
     "axios": "^1.4.0",
     "langchain": "^0.0.102",
-    "nanoid": "^4.0.2",
+    "nanoid": "^3.3.6",
     "websocket-as-promised": "^2.0.1",
     "ws": "^8.13.0"
   },
