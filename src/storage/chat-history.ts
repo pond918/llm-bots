@@ -37,7 +37,7 @@ export class ChatHistory {
 
       if (!msg.options.stateless && parent.options.leaf) {
         delete parent.options.leaf
-        await this._storage.set(msg.id as string, [preId, parent])
+        await this._storage.set(parent.id as string, [preId, parent])
       }
     } else if (pid !== '') {
       // append to current conversation

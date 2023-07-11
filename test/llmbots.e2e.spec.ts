@@ -17,7 +17,7 @@ describe('builtin LLMBots: vicuna-13b (e2e)', () => {
 
     // contextual conversation
     const req = new ChatDto("What's his wife's full name. reply 5 words most")
-    const resp = await claudeBot?.sendPrompt(req, msg => console.log(msg))
+    const resp = await claudeBot?.sendPrompt(req)
     console.log(resp)
     expect(resp?.text).not.toBeNull()
     expect(resp?.options.lastMsgId).toEqual(req.id)

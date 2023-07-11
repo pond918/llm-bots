@@ -21,12 +21,26 @@ export class ChatDto {
       lastMsgId?: string
       /** conversation key from llm server */
       _conversationKey?: string
-      /** TODO approximately max words of new response */
-      maxResponse?: number
       /** if true, this msg & it's response will not be stored into history */
       stateless?: boolean
       /** history of this msg */
       __history?: ChatDto[]
+
+      //// llm props
+      /** stream callback */
+      stream?: (msg: ChatDto) => void
+      modelName?: string
+      temperature?: number
+      /** Number of completions to generate for each prompt */
+      n?: number
+      /** Total probability mass of tokens to consider at each step */
+      topP?: number
+      /** respond token usage for current QA */
+      tokens?: number
+      /** Maximum number of tokens to generate in the completion. -1 returns as many tokens as possible given the prompt and the model's maximum context size. */
+      maxTokens?: number
+      /** quota number of tokens, will be updated in LLM response. */
+      quotaTokens?: number
     } & Record<string, unknown> = {},
   ) {
     statusCode ? (this.statusCode = statusCode) : (this.id = nanoid())

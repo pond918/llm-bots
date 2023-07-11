@@ -79,12 +79,12 @@ export abstract class LLMBot {
     await this._userStorage.set('_isAvailable', v)
   }
 
-  async sendPrompt(msg: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
+  async sendPrompt(msg: ChatDto): Promise<ChatDto> {
     if (!msg.text) return new ChatDto('')
 
     if (!(await this.isAvailable())) {
       const msg = new ChatDto('bot.notAvailable', 404)
-      streamCallback && streamCallback(msg)
+      msg.options?.stream && msg.options.stream(msg)
       return msg
     }
 
@@ -109,7 +109,7 @@ export abstract class LLMBot {
       await this._setConversation(msg.options._conversationKey)
     }
 
-    return this._sendPrompt(msg, streamCallback).then(async resp => {
+    return this._sendPrompt(msg).then(async resp => {
       // store response msg into history
       resp.options.lastMsgId = msg.id
       resp.options.type = 'ai'
@@ -122,7 +122,7 @@ export abstract class LLMBot {
    * @param msg prompt msg, or whole chat thread.
    * @param streamCallback
    */
-  abstract _sendPrompt(msg: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto>
+  abstract _sendPrompt(msg: ChatDto): Promise<ChatDto>
 
   /**
    * @returns the LLM server type:

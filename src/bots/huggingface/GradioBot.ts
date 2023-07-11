@@ -52,11 +52,11 @@ export default abstract class GradioBot extends LLMBot {
     return available
   }
 
-  async _sendPrompt(prompt: ChatDto, streamCallback?: (msg: ChatDto) => void): Promise<ChatDto> {
+  async _sendPrompt(msg: ChatDto): Promise<ChatDto> {
     let result: ChatDto = new ChatDto('', -1)
     for (const key in this._fnIndexes) {
       const fn_index = this._fnIndexes[key]
-      const resp = await this._sendFnIndex(fn_index, prompt, streamCallback)
+      const resp = await this._sendFnIndex(fn_index, msg, msg.options?.stream)
       resp && !resp.statusCode && resp.text && (result = resp)
     }
     this._formalizeResponse(result)
@@ -115,13 +115,18 @@ export default abstract class GradioBot extends LLMBot {
           } else if (event.msg === 'process_completed') {
             // Done
             if (event.success && event.output.data) {
-              const prompt = this.parseData(fn_index, event.output.data)
-              const resp = new ChatDto(
-                prompt,
-                fn_index == this._fnIndexes.at(-1) ? 0 : -1, // Only the last one is done
-              )
-              streamCallback && streamCallback(resp)
-              resolve(resp)
+              if (typeof event.output.data[2] !== 'string' || event.output.data[2] === '') {
+                const prompt = this.parseData(fn_index, event.output.data)
+                const resp = new ChatDto(
+                  prompt,
+                  fn_index == this._fnIndexes.at(-1) ? 0 : -1, // Only the last one is done
+                )
+                streamCallback && streamCallback(resp)
+                resolve(resp)
+              } else {
+                const errorMsg = this.parseError(event.output.data[2])
+                reject(new Error(errorMsg))
+              }
             } else {
               reject(new Error(event.output.error))
             }
@@ -163,6 +168,7 @@ export default abstract class GradioBot extends LLMBot {
     }
   }
 
+  abstract parseError(error: string): string
   abstract makeData(fn_index: number, prompt: ChatDto): unknown
   abstract parseData(fn_index: number, data: unknown): string
 

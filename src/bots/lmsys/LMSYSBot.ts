@@ -14,7 +14,7 @@ export default class LMSYSBot extends GradioBot {
   _lock = new AsyncLock() // FIXME Send requests in queue to save LMSYS
 
   constructor(name: string, readonly _model: string) {
-    super(name, 'https://chat.lmsys.org/', [7, 8], 'html')
+    super(name, 'https://chat.lmsys.org/', [9, 10], 'html')
   }
 
   /** needn't token */
@@ -42,6 +42,16 @@ export default class LMSYSBot extends GradioBot {
     if (fn_index === this._fnIndexes[1]) {
       r = data[1].at(-1)[1]
     }
-    return r
+    return r || ''
+  }
+
+  parseError(errorMsg: string) {
+    if (errorMsg.includes('REFRESH THIS PAGE')) {
+      errorMsg = errorMsg.replace(
+        'REFRESH THIS PAGE',
+        `<a href="${this._loginUrl}" target="innerWindow">REFRESH THIS PAGE</a>`,
+      )
+    }
+    return errorMsg
   }
 }
