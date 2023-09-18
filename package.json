@@ -30,7 +30,7 @@
   "dependencies": {
     "@hodlen/sse.ts": "^0.0.3",
     "async-lock": "^1.4.0",
-    "axios": "^1.4.0",
+    "axios": "^1.5.0",
     "langchain": "^0.0.102",
     "nanoid": "^3.3.6",
     "websocket-as-promised": "^2.0.1",
