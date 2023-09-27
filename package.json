@@ -34,7 +34,7 @@
     "langchain": "^0.0.102",
     "nanoid": "^3.3.6",
     "websocket-as-promised": "^2.0.1",
-    "ws": "^8.13.0"
+    "ws": "^8.14.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",
